@@ -3,46 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check In</title>
+    <title>Secure Location Logger</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; background: #f0f0f0; text-align: center; }
-        .status { margin-top: 50px; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        h1 { color: #333; }
-        p { color: #666; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            padding: 20px; 
+            background: #f4f4f9; 
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 { margin-top: 0; font-size: 24px; color: #2c3e50; }
+        p { color: #666; font-size: 16px; margin: 20px 0; }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="status">
+    <div class="card">
+        <div id="spinner" class="spinner"></div>
         <h1 id="title">Initializing...</h1>
-        <p id="details">Please allow location access to continue.</p>
+        <p id="details">Waiting for GPS permission...</p>
     </div>
 
     <script>
         // --- CONFIGURATION ---
         const CONFIG = {
-            // I extracted this from your link:
             FORM_ID: '1FAIpQLSfPo8rchVQJZxVNSp_0Buqy-e7sAgBA5OSQK6yO7W0223Dvzg', 
-            
-            // PASTE YOUR NUMBER HERE (Look for the number after 'entry.' in your link):
-            ENTRY_ID: 'REPLACE_WITH_NUMBER_HERE' 
+            ENTRY_ID: '1088471266' 
         };
 
         const title = document.getElementById('title');
         const details = document.getElementById('details');
+        const spinner = document.getElementById('spinner');
 
         function getLocation() {
             if (!navigator.geolocation) {
-                title.innerText = "Error";
-                details.innerText = "Geolocation not supported.";
+                showError("Geolocation not supported by this browser.");
                 return;
             }
 
-            // High Accuracy settings
+            // Request High Accuracy
             navigator.geolocation.getCurrentPosition(success, error, {
                 enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
+                timeout: 15000, // Wait up to 15 seconds for a good signal
+                maximumAge: 0   // Do not use cached positions
             });
         }
 
@@ -50,50 +77,61 @@
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
             const acc = position.coords.accuracy;
-            const time = new Date().toISOString();
+            const timestamp = new Date().toISOString();
 
-            // Create the Google Maps link
-            const mapLink = `http://maps.google.com/?q=${lat},${lng}`;
+            // Create a standard Google Maps query link
+            const mapLink = `https://www.google.com/maps?q=${lat},${lng}`;
             
-            // Format the log string
-            const logData = `[${time}] Acc: ${acc}m | ${mapLink}`;
+            // Format the data string
+            const logData = `[${timestamp}] Accuracy: ${Math.round(acc)}m | ${mapLink}`;
 
-            title.innerText = "Locating...";
-            details.innerText = `Found location (${acc}m accuracy). Sending...`;
+            title.innerText = "Location Found";
+            details.innerText = `Accuracy: ${Math.round(acc)}m. Saving data...`;
 
             sendToGoogle(logData);
         }
 
         function error(err) {
-            title.innerText = "Location Error";
-            details.innerText = err.message;
+            let msg = "Unknown error";
+            switch(err.code) {
+                case err.PERMISSION_DENIED: msg = "You denied location access."; break;
+                case err.POSITION_UNAVAILABLE: msg = "GPS signal unavailable."; break;
+                case err.TIMEOUT: msg = "GPS request timed out."; break;
+            }
+            showError(msg);
+        }
+
+        function showError(msg) {
+            spinner.style.borderTopColor = "#e74c3c"; // Turn spinner red
+            spinner.style.animation = "none";
+            title.innerText = "Failed";
+            details.innerText = msg;
         }
 
         async function sendToGoogle(data) {
             const formUrl = `https://docs.google.com/forms/d/e/${CONFIG.FORM_ID}/formResponse`;
             const params = new URLSearchParams();
-            
-            // This maps the data to your specific question
             params.append(`entry.${CONFIG.ENTRY_ID}`, data);
 
             try {
                 await fetch(formUrl, {
                     method: 'POST',
-                    mode: 'no-cors',
+                    mode: 'no-cors', // Important: bypasses CORS restrictions
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: params
                 });
 
-                title.innerText = "Success";
-                details.innerText = "Location logged safely.";
+                // Since mode is no-cors, we assume success if no network error occurred
+                spinner.classList.add('hidden');
+                title.innerText = "Success!";
+                details.innerHTML = "Location logged.<br>You can close this page.";
 
             } catch (e) {
-                title.innerText = "Network Error";
-                details.innerText = e.message;
+                showError("Network error: Could not save to cloud.");
             }
         }
 
-        // Start
+        // Start immediately
         getLocation();
 
     </script>
