@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Logger</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #222; color: #0f0; }
+        .status { margin-bottom: 20px; font-size: 1.2em; }
+        .log { border-top: 1px solid #444; padding-top: 10px; color: #ccc; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+    <div id="status" class="status">Initializing...</div>
+    <div id="log" class="log"></div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const CONFIG = {
+            TOKEN: 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN', // Keep this secret!
+            USER: 'YOUR_GITHUB_USERNAME',
+            REPO: 'YOUR_REPO_NAME',
+            FILE_PATH: 'locations.txt', // The file to store data in
+            BRANCH: 'main' // or 'master'
+        };
+
+        const statusDiv = document.getElementById('status');
+        const logDiv = document.getElementById('log');
+
+        function updateStatus(msg) {
+            statusDiv.innerText = `> ${msg}`;
+            console.log(msg);
+        }
+
+        function appendLog(msg) {
+            logDiv.innerText += `\n${msg}`;
+        }
+
+        // 1. Get Location
+        function getLocation() {
+            updateStatus("Acquiring GPS signal (High Accuracy)...");
+            
+            if (!navigator.geolocation) {
+                updateStatus("Geolocation is not supported by your browser.");
+                return;
+            }
+
+            const options = {
+                enableHighAccuracy: true, // Critical for ~10m accuracy
+                timeout: 10000,
+                maximumAge: 0
+            };
+
+            navigator.geolocation.getCurrentPosition(success, error, options);
+        }
+
+        // 2. Format Data
+        function success(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+            const timestamp = new Date().toISOString();
+            
+            // Construct Google Maps Link
+            const gmapLink = `https://www.google.com/maps?q=${lat},${lng}`;
+            
+            // The line to append
+            const newEntry = `[${timestamp}] Acc: ${accuracy}m | ${gmapLink}`;
+            
+            updateStatus(`Location found (${accuracy}m accuracy). saving...`);
+            appendLog(`Lat: ${lat}, Lng: ${lng}`);
+            
+            saveToGitHub(newEntry);
+        }
+
+        function error(err) {
+            updateStatus(`ERROR(${err.code}): ${err.message}`);
+        }
+
+        // 3. Save to GitHub via API
+        async function saveToGitHub(newContent) {
+            const url = `https://api.github.com/repos/${CONFIG.USER}/${CONFIG.REPO}/contents/${CONFIG.FILE_PATH}`;
+            
+            try {
+                // A. Get current file (to get SHA and current content)
+                let currentContent = "";
+                let sha = null;
+                
+                const getResponse = await fetch(url, {
+                    headers: { 
+                        'Authorization': `token ${CONFIG.TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (getResponse.ok) {
+                    const data = await getResponse.json();
+                    sha = data.sha;
+                    // Github API returns content in Base64. Decode it.
+                    currentContent = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ""))));
+                }
+
+                // B. Append new line
+                const updatedContent = currentContent + newEntry + "\n";
+                
+                // C. Encode back to Base64
+                const encodedContent = btoa(unescape(encodeURIComponent(updatedContent)));
+
+                // D. Upload (PUT request)
+                const putBody = {
+                    message: "Log location [Automated]",
+                    content: encodedContent,
+                    branch: CONFIG.BRANCH
+                };
+
+                if (sha) {
+                    putBody.sha = sha; // Required if updating existing file
+                }
+
+                const putResponse = await fetch(url, {
+                    method: 'PUT',
+                    headers: { 
+                        'Authorization': `token ${CONFIG.TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(putBody)
+                });
+
+                if (putResponse.ok) {
+                    updateStatus("SUCCESS: Location saved to file.");
+                } else {
+                    const errData = await putResponse.json();
+                    updateStatus(`GitHub API Error: ${errData.message}`);
+                }
+
+            } catch (e) {
+                updateStatus(`Network Error: ${e.message}`);
+            }
+        }
+
+        // Start process immediately
+        getLocation();
+
+    </script>
+</body>
+</html>
